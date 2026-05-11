@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-bg text-text antialiased;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  @media (prefers-color-scheme: dark) {
+    body {
+      @apply bg-bg-dark text-text-dark;
+    }
+  }
+  ::selection {
+    @apply bg-accent/30;
+  }
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+  img {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+}
+
+@layer components {
+  .skeleton {
+    @apply bg-border/60 dark:bg-border-dark/60 rounded-tile;
+    background-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.4) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    @apply animate-shimmer;
+  }
+  @media (prefers-color-scheme: dark) {
+    .skeleton {
+      background-image: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.06) 50%,
+        transparent 100%
+      );
+    }
+  }
+}
