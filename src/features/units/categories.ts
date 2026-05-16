@@ -12,7 +12,7 @@ export type UnitCategoryMeta = {
 export const UNIT_CATEGORIES: readonly UnitCategoryMeta[] = [
   { value: 'fully_self_contained', label: 'Fully Self Contained', short: 'Fully SC', tone: 'emerald' },
   { value: 'no_hob_self_contained', label: 'No Hob Self Contained', short: 'No Hob SC', tone: 'amber' },
-  { value: 'onsuit', label: 'Onsuit', short: 'Onsuit', tone: 'violet' },
+  { value: 'en_suite', label: 'En suite', short: 'En suite', tone: 'violet' },
   { value: 'shared_bathroom', label: 'Shared Bathroom', short: 'Shared Bath', tone: 'slate' },
 ] as const;
 

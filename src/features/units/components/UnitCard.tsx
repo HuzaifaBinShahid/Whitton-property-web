@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { DoorOpen } from 'lucide-react';
 import type { Unit } from '@/types/db';
 import { UnitCategoryBadge } from './UnitCategoryBadge';
+import { useUnitCover } from '@/features/properties/hooks';
+import { getThumbUrl } from '@/lib/supabase';
 
 type Props = {
   unit: Unit;
@@ -10,6 +12,7 @@ type Props = {
 };
 
 export function UnitCard({ unit, index }: Props) {
+  const cover = useUnitCover(unit.id);
   return (
     <motion.div
       initial={{ opacity: 0, y: 6 }}
@@ -18,15 +21,26 @@ export function UnitCard({ unit, index }: Props) {
     >
       <Link
         to={`/unit/${unit.id}`}
-        className="group block rounded-card bg-surface border border-border dark:bg-surface-dark dark:border-border-dark hover:border-accent/40 dark:hover:border-accent-dark/40 transition-colors p-3.5"
+        className="group block rounded-card overflow-hidden bg-surface border border-border dark:bg-surface-dark dark:border-border-dark hover:border-accent/40 dark:hover:border-accent-dark/40 transition-colors"
       >
-        <div className="flex items-center gap-2 mb-2">
-          <div className="inline-flex h-8 w-8 items-center justify-center rounded-tile bg-accent/10 text-accent dark:bg-accent-dark/15 dark:text-accent-dark">
-            <DoorOpen size={16} strokeWidth={1.75} />
-          </div>
-          <div className="text-[15px] font-semibold truncate flex-1 min-w-0">{unit.name}</div>
+        <div className="relative aspect-[4/3] bg-border/40 dark:bg-border-dark/40">
+          {cover.data ? (
+            <img
+              src={getThumbUrl(cover.data, 500)}
+              alt=""
+              loading="lazy"
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center text-muted dark:text-muted-dark">
+              <DoorOpen size={22} strokeWidth={1.5} />
+            </div>
+          )}
         </div>
-        <UnitCategoryBadge value={unit.category} short />
+        <div className="p-3.5">
+          <div className="text-[15px] font-semibold truncate mb-1.5">{unit.name}</div>
+          <UnitCategoryBadge value={unit.category} short />
+        </div>
       </Link>
     </motion.div>
   );

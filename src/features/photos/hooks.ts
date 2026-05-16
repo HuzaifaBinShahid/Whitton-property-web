@@ -5,6 +5,7 @@ import {
   listPhotosByProperty,
   listPhotosByUnit,
   movePhotosToUnit,
+  setPhotoAsCover,
   uploadPhoto,
 } from './api';
 import type { Photo } from '@/types/db';
@@ -71,6 +72,19 @@ type MoveVars = {
   targetUnitId: string;
   sourceUnitIds: string[];
 };
+
+export function useSetCover() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: setPhotoAsCover,
+    onSuccess: (_, photo) => {
+      if (photo.unit_id) qc.invalidateQueries({ queryKey: KEYS.byUnit(photo.unit_id) });
+      if (photo.property_id) qc.invalidateQueries({ queryKey: KEYS.byProperty(photo.property_id) });
+      qc.invalidateQueries({ queryKey: ['property-cover'] });
+      qc.invalidateQueries({ queryKey: ['unit-cover'] });
+    },
+  });
+}
 
 export function useMovePhotos() {
   const qc = useQueryClient();

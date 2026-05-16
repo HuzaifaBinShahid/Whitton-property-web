@@ -90,3 +90,28 @@ export async function updatePhotoLabel(id: string, label: string | null): Promis
   if (error) throw error;
   return data;
 }
+
+export async function setPhotoAsCover(photo: Photo): Promise<void> {
+  if (photo.unit_id) {
+    const { error: clearErr } = await supabase
+      .from('photos')
+      .update({ is_cover: false })
+      .eq('unit_id', photo.unit_id)
+      .neq('id', photo.id);
+    if (clearErr) throw clearErr;
+  } else if (photo.property_id) {
+    const { error: clearErr } = await supabase
+      .from('photos')
+      .update({ is_cover: false })
+      .eq('property_id', photo.property_id)
+      .neq('id', photo.id);
+    if (clearErr) throw clearErr;
+  } else {
+    throw new Error('Photo has no owner');
+  }
+  const { error } = await supabase
+    .from('photos')
+    .update({ is_cover: true })
+    .eq('id', photo.id);
+  if (error) throw error;
+}

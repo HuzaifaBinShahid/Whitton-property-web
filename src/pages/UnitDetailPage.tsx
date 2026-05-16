@@ -16,7 +16,13 @@ import { UnitCategoryBadge } from '@/features/units/components/UnitCategoryBadge
 import { UnitCategoryEditModal } from '@/features/units/components/UnitCategoryEditModal';
 import { UnitDimensions } from '@/features/units/components/UnitDimensions';
 import { DimensionsEditModal } from '@/features/units/components/DimensionsEditModal';
-import { usePhotosByProperty, usePhotosByUnit, useUploadPhotos } from '@/features/photos/hooks';
+import {
+  usePhotosByProperty,
+  usePhotosByUnit,
+  useSetCover,
+  useUploadPhotos,
+} from '@/features/photos/hooks';
+import type { Photo } from '@/types/db';
 import { PhotoGrid } from '@/features/photos/components/PhotoGrid';
 import { PhotoUploader } from '@/features/photos/components/PhotoUploader';
 import { usePageTitle } from '@/utils/usePageTitle';
@@ -30,6 +36,7 @@ export function UnitDetailPage() {
   const unitPhotos = usePhotosByUnit(id);
   const propertyPhotos = usePhotosByProperty(propertyId);
   const upload = useUploadPhotos();
+  const setCover = useSetCover();
   const del = useDeleteUnit(propertyId);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [catEditOpen, setCatEditOpen] = useState(false);
@@ -40,6 +47,15 @@ export function UnitDetailPage() {
       ? `${property.data.name} — ${unit.data.name}`
       : unit.data?.name ?? 'Unit',
   );
+
+  const onSetCover = async (photo: Photo) => {
+    try {
+      await setCover.mutateAsync(photo);
+      toast.success('Cover photo updated');
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Could not set cover');
+    }
+  };
 
   const onUpload = async (files: File[]) => {
     try {
@@ -165,6 +181,7 @@ export function UnitDetailPage() {
           <h3 className="text-[15px] font-semibold mb-2 px-1">Unit Photos</h3>
           <PhotoGrid
             photos={unitPhotos.data ?? []}
+            onSetCover={onSetCover}
             trailing={<PhotoUploader onFiles={onUpload} uploading={upload.isPending} />}
           />
         </section>

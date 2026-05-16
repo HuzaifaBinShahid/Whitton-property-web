@@ -13,10 +13,8 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
-  @media (prefers-color-scheme: dark) {
-    body {
-      @apply bg-bg-dark text-text-dark;
-    }
+  html.dark body {
+    @apply bg-bg-dark text-text-dark;
   }
   ::selection {
     @apply bg-accent/30;
@@ -42,14 +40,12 @@
     background-size: 200% 100%;
     @apply animate-shimmer;
   }
-  @media (prefers-color-scheme: dark) {
-    .skeleton {
-      background-image: linear-gradient(
-        90deg,
-        transparent 0%,
-        rgba(255, 255, 255, 0.06) 50%,
-        transparent 100%
-      );
-    }
+  html.dark .skeleton {
+    background-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.06) 50%,
+      transparent 100%
+    );
   }
 }

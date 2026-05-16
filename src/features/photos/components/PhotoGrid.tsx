@@ -10,10 +10,18 @@ type Props = {
   selectable?: boolean;
   selectedIds?: Set<string>;
   onTogglePhoto?: (photo: Photo) => void;
+  onSetCover?: (photo: Photo) => void;
   trailing?: ReactNode;
 };
 
-export function PhotoGrid({ photos, selectable, selectedIds, onTogglePhoto, trailing }: Props) {
+export function PhotoGrid({
+  photos,
+  selectable,
+  selectedIds,
+  onTogglePhoto,
+  onSetCover,
+  trailing,
+}: Props) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const handleClick = (photo: Photo) => {
@@ -49,6 +57,7 @@ export function PhotoGrid({ photos, selectable, selectedIds, onTogglePhoto, trai
               selectable={selectable}
               selected={selectedIds?.has(photo.id) ?? false}
               onClick={handleClick}
+              onSetCover={onSetCover}
             />
           </motion.div>
         ))}

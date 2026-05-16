@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
 import { ChevronLeft, Home, BarChart3 } from 'lucide-react';
 import { IconButton } from '../ui/IconButton';
+import { ThemeToggle } from '../ui/ThemeToggle';
 import { cn } from '@/utils/cn';
 
 type Props = {
@@ -67,7 +68,10 @@ export function TopBar({ title, subtitle, showBack, right }: Props) {
           ) : null}
         </div>
 
-        {right ? <div className="flex items-center gap-1">{right}</div> : null}
+        <div className="flex items-center gap-1">
+          {right}
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   );

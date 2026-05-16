@@ -16,7 +16,8 @@ import { PropertyHero } from '@/features/properties/components/PropertyHero';
 import { UtilitiesSection } from '@/features/properties/components/UtilitiesSection';
 import { useUnitsByProperty } from '@/features/units/hooks';
 import { UnitCard } from '@/features/units/components/UnitCard';
-import { usePhotosByProperty, useUploadPhotos } from '@/features/photos/hooks';
+import { usePhotosByProperty, useSetCover, useUploadPhotos } from '@/features/photos/hooks';
+import type { Photo } from '@/types/db';
 import { PhotoGrid } from '@/features/photos/components/PhotoGrid';
 import { PhotoUploader } from '@/features/photos/components/PhotoUploader';
 import { useComplianceDocs } from '@/features/compliance/hooks';
@@ -32,10 +33,20 @@ export function PropertyDetailPage() {
   const photos = usePhotosByProperty(id);
   const compliance = useComplianceDocs(id);
   const upload = useUploadPhotos();
+  const setCover = useSetCover();
   const del = useDeleteProperty();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   usePageTitle(property.data?.name ?? 'Property');
+
+  const onSetCover = async (photo: Photo) => {
+    try {
+      await setCover.mutateAsync(photo);
+      toast.success('Cover photo updated');
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Could not set cover');
+    }
+  };
 
   const onUpload = async (files: File[]) => {
     try {
@@ -126,6 +137,7 @@ export function PropertyDetailPage() {
           <h3 className="text-[15px] font-semibold mb-2 px-1">Property Photos</h3>
           <PhotoGrid
             photos={photos.data ?? []}
+            onSetCover={onSetCover}
             trailing={<PhotoUploader onFiles={onUpload} uploading={upload.isPending} />}
           />
           <p className="text-[12px] text-muted dark:text-muted-dark mt-2 px-1">

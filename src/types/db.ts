@@ -1,7 +1,7 @@
 export type UnitCategory =
   | 'fully_self_contained'
   | 'no_hob_self_contained'
-  | 'onsuit'
+  | 'en_suite'
   | 'shared_bathroom';
 
 export type ComplianceCategory =
@@ -10,7 +10,10 @@ export type ComplianceCategory =
   | 'fra'
   | 'fire_detection'
   | 'emergency_lighting'
-  | 'epc';
+  | 'epc'
+  | 'floor_plan';
+
+export type PhotoPosition = 'front' | 'back';
 
 export type Property = {
   id: string;
@@ -46,6 +49,8 @@ export type Photo = {
   storage_path: string;
   label: string | null;
   sort_order: number;
+  position: PhotoPosition | null;
+  is_cover: boolean;
   created_at: string;
 };
 
@@ -153,6 +158,8 @@ export type Database = {
           storage_path: string;
           label?: string | null;
           sort_order?: number;
+          position?: PhotoPosition | null;
+          is_cover?: boolean;
           created_at?: string;
         };
         Update: {
@@ -162,6 +169,8 @@ export type Database = {
           storage_path?: string;
           label?: string | null;
           sort_order?: number;
+          position?: PhotoPosition | null;
+          is_cover?: boolean;
           created_at?: string;
         };
         Relationships: [];

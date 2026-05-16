@@ -97,6 +97,25 @@ export async function deleteProperty(id: string): Promise<void> {
 }
 
 export async function getPropertyCoverPath(propertyId: string): Promise<string | null> {
+  const { data: marked } = await supabase
+    .from('photos')
+    .select('storage_path')
+    .eq('property_id', propertyId)
+    .eq('is_cover', true)
+    .limit(1)
+    .maybeSingle();
+  if (marked?.storage_path) return marked.storage_path;
+
+  const { data: frontPhoto } = await supabase
+    .from('photos')
+    .select('storage_path')
+    .eq('property_id', propertyId)
+    .eq('position', 'front')
+    .order('sort_order', { ascending: true })
+    .limit(1)
+    .maybeSingle();
+  if (frontPhoto?.storage_path) return frontPhoto.storage_path;
+
   const { data: propPhoto } = await supabase
     .from('photos')
     .select('storage_path')
@@ -112,16 +131,30 @@ export async function getPropertyCoverPath(propertyId: string): Promise<string |
     .eq('property_id', propertyId)
     .order('created_at', { ascending: true });
   for (const u of units ?? []) {
-    const { data: photo } = await supabase
-      .from('photos')
-      .select('storage_path')
-      .eq('unit_id', u.id)
-      .order('sort_order', { ascending: true })
-      .limit(1)
-      .maybeSingle();
-    if (photo?.storage_path) return photo.storage_path;
+    const path = await getUnitCoverPath(u.id);
+    if (path) return path;
   }
   return null;
+}
+
+export async function getUnitCoverPath(unitId: string): Promise<string | null> {
+  const { data: marked } = await supabase
+    .from('photos')
+    .select('storage_path')
+    .eq('unit_id', unitId)
+    .eq('is_cover', true)
+    .limit(1)
+    .maybeSingle();
+  if (marked?.storage_path) return marked.storage_path;
+
+  const { data } = await supabase
+    .from('photos')
+    .select('storage_path')
+    .eq('unit_id', unitId)
+    .order('sort_order', { ascending: true })
+    .limit(1)
+    .maybeSingle();
+  return data?.storage_path ?? null;
 }
 
 export async function getPropertyUnitCount(propertyId: string): Promise<number> {

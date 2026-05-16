@@ -4,9 +4,12 @@ import { RouterProvider } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { queryClient } from '@/lib/queryClient';
 import { router } from '@/router';
+import { useTheme } from '@/lib/theme';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
 export function App() {
+  const theme = useTheme((s) => s.theme);
+  const isDark = theme === 'dark';
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
@@ -16,9 +19,9 @@ export function App() {
           toastOptions={{
             duration: 3000,
             style: {
-              background: '#161618',
-              color: '#F5F5F7',
-              border: '1px solid #26262A',
+              background: isDark ? '#161618' : '#FFFFFF',
+              color: isDark ? '#F5F5F7' : '#0B0B0C',
+              border: isDark ? '1px solid #26262A' : '1px solid #ECECEC',
               borderRadius: '12px',
               fontSize: '13px',
             },

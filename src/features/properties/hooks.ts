@@ -5,6 +5,7 @@ import {
   getProperty,
   getPropertyCoverPath,
   getPropertyUnitCount,
+  getUnitCoverPath,
   listProperties,
   updateProperty,
   type PropertyPatch,
@@ -14,6 +15,7 @@ const KEYS = {
   list: ['properties'] as const,
   detail: (id: string) => ['property', id] as const,
   cover: (id: string) => ['property-cover', id] as const,
+  unitCover: (id: string) => ['unit-cover', id] as const,
   unitCount: (id: string) => ['property-unit-count', id] as const,
 };
 
@@ -33,6 +35,14 @@ export function usePropertyCover(id: string) {
   return useQuery({
     queryKey: KEYS.cover(id),
     queryFn: () => getPropertyCoverPath(id),
+    enabled: Boolean(id),
+  });
+}
+
+export function useUnitCover(id: string) {
+  return useQuery({
+    queryKey: KEYS.unitCover(id),
+    queryFn: () => getUnitCoverPath(id),
     enabled: Boolean(id),
   });
 }
