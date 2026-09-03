@@ -5,7 +5,15 @@ import { env } from './env';
 const customAuthStorage = {
   getItem: (key: string): string | null => {
     if (typeof window === 'undefined') return null;
-    return sessionStorage.getItem(key) ?? localStorage.getItem(key);
+    const rememberMe = localStorage.getItem('whitton_remember_me') === 'true';
+    if (rememberMe) {
+      return localStorage.getItem(key) ?? sessionStorage.getItem(key);
+    }
+    // Clean up any old persistent token from localStorage
+    if (localStorage.getItem(key)) {
+      localStorage.removeItem(key);
+    }
+    return sessionStorage.getItem(key);
   },
   setItem: (key: string, value: string): void => {
     if (typeof window === 'undefined') return;
@@ -13,6 +21,7 @@ const customAuthStorage = {
     if (rememberMe) {
       localStorage.setItem(key, value);
     } else {
+      localStorage.removeItem(key);
       sessionStorage.setItem(key, value);
     }
   },
