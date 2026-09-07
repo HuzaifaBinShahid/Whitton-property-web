@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import type { ComplianceDocument, Photo } from '@/types/db';
-import { buildGmailUrl } from './buildGmailUrl';
+import { buildGmailUrl, copyRichHtmlToClipboard } from './buildGmailUrl';
 import { useLogSentEmail } from '@/features/stats/hooks';
 
 type ComposeArgs = {
@@ -37,20 +37,19 @@ export function useComposeEmail() {
           : propertyName ?? unitName ?? '';
 
       const built = buildGmailUrl({ subject, photos, docs: documents });
+
+      // Automatically copy rich HTML with embedded visual images to clipboard
+      const copiedRich = await copyRichHtmlToClipboard(built.html, built.body);
+
       const opened = window.open(built.url, '_blank', 'noopener,noreferrer');
 
-      if (!opened) {
-        try {
-          await navigator.clipboard.writeText(built.body);
-          toast.success('Popup blocked — email body copied to clipboard. Paste into Gmail.');
-        } catch {
-          toast.error('Popup blocked and could not access clipboard. Allow popups and retry.');
-        }
-      } else if (built.truncated) {
-        toast(
-          `Body trimmed — ${built.includedCount} link${built.includedCount === 1 ? '' : 's'} included, ${built.omittedCount} omitted.`,
-          { icon: '✂️' },
+      if (copiedRich) {
+        toast.success(
+          'Formatted images & links copied! Press Cmd+V / Ctrl+V in Gmail to paste visual photos.',
+          { duration: 6000, icon: '🖼️' },
         );
+      } else if (!opened) {
+        toast.error('Popup blocked. Allow popups to open Gmail.');
       } else {
         toast.success('Opened Gmail compose');
       }
@@ -71,3 +70,4 @@ export function useComposeEmail() {
 
   return { compose, pending };
 }
+
